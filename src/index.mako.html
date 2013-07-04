@@ -113,8 +113,11 @@
       </div>
 % if device == 'desktop':
       <form class="navbar-form pull-right hidden-xs">
-        <div ga-background-layer-selector
-          ga-background-layer-selector-map="map"></div>
+        <div id="background-selection">
+          <div ga-background-layer-selector
+            ga-background-layer-selector-map="map"></div>
+        </div>
+        <span ga-help="33"></span>
         <div id="toptools">
           <div ga-fullscreen ga-fullscreen-map="map"></div>&nbsp;&nbsp;
           <a href="#feedback" data-toggle="modal" translate>problem_announcement</a>&nbsp;&nbsp;
@@ -124,6 +127,7 @@
             <div ga-translation-selector
               ga-translation-selector-options="options"></div>
           </div>
+          <span ga-help="11"></span>
         </div>
       </form>
 % endif
@@ -153,6 +157,7 @@
       <div  class="pull-left" ga-scale-line ga-scale-line-map="map"></div>
 % if device == 'desktop':
       <div id="mouseposition" class="pull-left hidden-xs" ng-controller="GaMousePositionController">
+        <span ga-help="12"></span>
         <select ng-model="options.projection"
                 ng-options="p.label for p in mousePositionProjections">
         </select>
@@ -195,6 +200,7 @@
             <i class="hidden-collapsed icon-caret-down"></i>
             <i class="icon-share"></i>
             <span translate>share</span>
+            <span ga-help="52"></span>
           </a>
           <div id="share" class="panel-collapse collapse">
             <div class="panel-body" ng-controller="GaShareController">
@@ -210,6 +216,7 @@
             <i class="hidden-collapsed icon-caret-down"></i>
             <i class="icon-print"></i>
             <span translate>print</span>
+            <span ga-help="40"></span>
           </a>
           <div id="print" class="panel-collapse collapse">
             <div class="panel-body" ng-controller="GaPrintController">
@@ -287,6 +294,7 @@
             <i class="visible-collapsed icon-caret-right"></i>
             <i class="hidden-collapsed icon-caret-down"></i>
             <span translate={{topicId}}></span>
+            <span ga-help="32,37,39"></span>
           </a>
           <div id="catalog" class="collapse"  ga-collapsible-observe="globals.catalogShown" ng-controller="GaCatalogtreeController">
 % if device == 'mobile':
@@ -306,6 +314,7 @@
             <i class="visible-collapsed icon-caret-right"></i>
             <i class="hidden-collapsed icon-caret-down"></i>
             <span translate>layer_selection</span>
+            <span ga-help="34,35,36"></span>
           </a>
           <div id="selection"  ga-collapsible-observe="globals.selectionShown" class="${"in" if device == "desktop" else ""}">
             <div class="panel-body panel-body-wide" ga-layermanager ga-layermanager-map="map">
