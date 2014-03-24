@@ -53,10 +53,10 @@ help:
 all: prod dev lint apache testdev testprod deploy/deploy-branch.cfg fixrights
 
 .PHONY: prod
-prod: prd/ prd/lib/ prd/lib/build.js prd/style/app.css prd/style/print.css prd/index.html prd/mobile.html prd/info.json prd/img/ prd/style/font-awesome-3.2.1/font/ prd/locales/ prd/checker prd/robots.txt
+prod: prd/ prd/lib/ prd/lib/build.js prd/style/app.css prd/style/print.css prd/geoadmin.appcache prd/index.html prd/mobile.html prd/info.json prd/img/ prd/style/font-awesome-3.2.1/font/ prd/locales/ prd/checker prd/robots.txt
 
 .PHONY: dev
-dev: src/deps.js src/style/app.css src/style/print.css src/index.html src/mobile.html
+dev: src/deps.js src/style/app.css src/style/print.css src/geoadmin.appcache src/index.html src/mobile.html
 
 .PHONY: lint
 lint: .build-artefacts/lint.timestamp
@@ -136,10 +136,14 @@ prd/style/print.css: src/style/print.less src/style/app_print.less node_modules 
 	mkdir -p $(dir $@)
 	node_modules/.bin/lessc -ru --yui-compress $< $@
 
-prd/index.html: src/index.mako.html prd/lib/build.js prd/style/app.css .build-artefacts/python-venv/bin/mako-render .build-artefacts/python-venv/bin/htmlmin
+prd/index.html: src/index.mako.html prd/lib/build.js prd/style/app.css prd/geoadmin.appcache .build-artefacts/python-venv/bin/mako-render .build-artefacts/python-venv/bin/htmlmin
 	mkdir -p $(dir $@)
 	.build-artefacts/python-venv/bin/mako-render --var "device=desktop" --var "mode=prod" --var "version=$(VERSION)" --var "versionslashed=$(VERSION)/" --var "user_env=$(APACHE_BASE_PATH)" --var "api_url=$(API_URL)" $< > $@
 	.build-artefacts/python-venv/bin/htmlmin $@ $@
+
+prd/geoadmin.appcache: src/geoadmin.mako.appcache .build-artefacts/python-venv/bin/mako-render
+	mkdir -p $(dir $@)
+	.build-artefacts/python-venv/bin/mako-render --var "version=$(VERSION)" --var "versionslashed=$(VERSION)/" --var "user_env=$(APACHE_BASE_PATH)" --var "api_url=$(API_URL)" $< > $@
 
 prd/mobile.html: src/index.mako.html .build-artefacts/python-venv/bin/mako-render .build-artefacts/python-venv/bin/htmlmin
 	mkdir -p $(dir $@)
@@ -176,8 +180,12 @@ src/style/app.css: src/style/app.less src/style/app_print.less src/style/ga_boot
 src/style/print.css: src/style/print.less src/style/app_print.less node_modules .build-artefacts/bootstrap
 	node_modules/.bin/lessc $(LESS_PARAMETERS) $< $@
 
-src/index.html: src/index.mako.html .build-artefacts/python-venv/bin/mako-render
+src/index.html: src/index.mako.html src/geoadmin.appcache .build-artefacts/python-venv/bin/mako-render
 	.build-artefacts/python-venv/bin/mako-render --var "device=desktop" --var "version=" --var "versionslashed=" --var "user_env=$(APACHE_BASE_PATH)" --var "api_url=$(API_URL)" $< > $@
+
+src/geoadmin.appcache: src/geoadmin.mako.appcache .build-artefacts/python-venv/bin/mako-render
+	mkdir -p $(dir $@)
+	.build-artefacts/python-venv/bin/mako-render --var "version=$(VERSION)" --var "versionslashed=$(VERSION)/" --var "user_env=$(APACHE_BASE_PATH)" --var "api_url=$(API_URL)" $< > $@
 
 src/mobile.html: src/index.mako.html .build-artefacts/python-venv/bin/mako-render
 	.build-artefacts/python-venv/bin/mako-render --var "device=mobile" --var "version=" --var "versionslashed=" --var "user_env=$(APACHE_BASE_PATH)" --var "api_url=$(API_URL)" $< > $@
@@ -325,8 +333,10 @@ clean: cleanrc
 cleanrc:
 	rm -f src/index.html
 	rm -f src/mobile.html
+	rm -f src/geoadmin.appcache
 	rm -f prd/index.html
 	rm -f prd/mobile.html
+	rm -f prd/geoadmin.appcache
 	rm -f prd/robots.txt
 	rm -f apache/app.conf
 	rm -f deploy/deploy-branch.cfg
