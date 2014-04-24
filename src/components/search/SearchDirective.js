@@ -20,7 +20,7 @@
       function($compile, $translate, $timeout, gaMapUtils, gaLayers,
         gaLayerMetadataPopup, gaPermalink, gaUrlUtils, gaGetCoordinate,
         gaBrowserSniffer, gaLayerFilters, gaKml, gaPreviewLayers,
-        gaPermalinkSearch) {
+        gaSwisssearch) {
           var currentTopic,
               footer = [
             '<div class="ga-search-footer clearfix">',
@@ -411,12 +411,12 @@
                     el = el.find('.tt-suggestions');
                     if (el) {
                       $compile(el)(scope);
-                      gaPermalinkSearch.feed(el);
+                      gaSwisssearch.feed(el);
                     }
                     el.scrollTop(0);
                   }
                 }
-                gaPermalinkSearch.check();
+                gaSwisssearch.check();
               });
 
               scope.clearInput = function() {
@@ -471,7 +471,7 @@
               if (angular.isDefined(searchParam) &&
                   searchParam.length > 0) {
                 var unregister = scope.$on('gaLayersChange', function() {
-                  gaPermalinkSearch.activate((2 * typeAheadDatasets.length));
+                  gaSwisssearch.activate((2 * typeAheadDatasets.length));
                   scope.query = searchParam;
                   triggerSearch(LOCATIONS);
                   triggerSearch(LAYERS);
