@@ -190,7 +190,7 @@
                 loadGeometry(layerId, featureId, function(feature) {
                   $rootScope.$broadcast('gaTriggerTooltipRequest', {
                     features: [feature],
-                    onCloseCB: function() {}
+                    onCloseCB: angular.noop
                   });
                   gaPreviewFeatures.zoom(map,
                       geojsonParser.readFeature(feature));
