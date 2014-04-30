@@ -333,6 +333,9 @@
                     },
                     filter: function(response) {
                       var results = response.results;
+                      scope.$apply(function() {
+                        scope.hasLocationResults = (results.length !== 0);
+                      });
                       return $.map(results, function(val) {
                         val.inputVal = val.attrs.label
                             .replace('<b>', '').replace('</b>', '');
@@ -357,6 +360,11 @@
                       scope.$apply(function() {
                         scope.layers = map.getLayers().getArray();
                       });
+                      if (scope.searchableLayers.length === 0) {
+                        scope.$apply(function() {
+                          scope.hasFeatureResults = false;
+                        });
+                      }
                       return triggerFeatureSearch();
                     },
                     replace: function(url, searchText) {
@@ -379,6 +387,9 @@
                     },
                     filter: function(response) {
                       var results = response.results;
+                      scope.$apply(function() {
+                        scope.hasFeatureResults = (results.length !== 0);
+                      });
                       return $.map(results, function(val) {
                         val.inputVal = val.attrs.label
                             .replace('<b>', '').replace('</b>', '');
@@ -527,10 +538,35 @@
                 }
               };
 
+              // Adapt dynamically the list height according to the
+              // number of lists
+              scope.nbOfSuggestionsLists = {
+                'ga-search-1': false,
+                'ga-search-2': false,
+                'ga-search-3': false
+              };
+
+              var setListCount = function() {
+                var counter = 0;
+                counter = !scope.hasLocationResults ? counter : counter + 1;
+                counter = !scope.hasFeatureResults ? counter : counter + 1;
+                counter = !scope.hasLayerResults ? counter : counter + 1;
+                for (var cssClass in scope.nbOfSuggestionsLists) {
+                  if (cssClass === 'ga-search-' + counter) {
+                    scope.nbOfSuggestionsLists[cssClass] = true;
+                  } else {
+                    scope.nbOfSuggestionsLists[cssClass] = false;
+                  }
+                }
+              };
+
               viewDropDown.on('gaSuggestionsRendered', function(evt) {
                 var el;
                 if (viewDropDown.isVisible()) {
+                  setListCount();
                   el = element.find('.tt-dataset-' + evt.data.name);
+                  el.attr('ng-class', 'nbOfSuggestionsLists');
+                  $compile(el)(scope);
                   if (el) {
                     el = el.find('.tt-suggestions');
                     if (el) {
